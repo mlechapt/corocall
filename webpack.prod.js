@@ -14,15 +14,17 @@ module.exports = {
     publicPath: '/',
     filename: '[name].js'
   },
+  resolve: {
+    extensions: ['.js', '.jsx', '.ts', '.tsx']
+  },
   target: 'web',
   devtool: 'source-map',
-  // Webpack 4 does not have a CSS minifier, although
   optimization: {
     minimizer: [
       new UglifyJsPlugin({
         cache: true,
         parallel: true,
-        sourceMap: true // set to true if you want JS source maps
+        sourceMap: true
       }),
       new OptimizeCSSAssetsPlugin({})
     ]
@@ -30,21 +32,29 @@ module.exports = {
   module: {
     rules: [
       {
-        // Transpiles ES6-8 into ES5
-        test: /\.js$/,
+        test: /\.jsx?$/,
+        exclude: /node_modules/,
+        loader: 'babel-loader',
+        query: {
+          presets: ['@babel/preset-env', '@babel/preset-react']
+        }
+      },
+      {
+        test: /\.m?js$/,
         exclude: /node_modules/,
         use: {
-          loader: "babel-loader"
-        }
+            loader: 'babel-loader',
+            options: {
+              presets: ['@babel/preset-env', '@babel/preset-react']
+            }
+          }
       },
 	    {
 	      test: /\.tsx?$/,
-	      use: 'ts-loader',
+	      use: ['babel-loader', 'ts-loader'],
 	      exclude: /node_modules/
 	    },
       {
-        // Loads the javacript into html template provided.
-        // Entry point is set below in HtmlWebPackPlugin in Plugins 
         test: /\.html$/,
         use: [
           {
@@ -54,13 +64,10 @@ module.exports = {
         ]
       },
       {
-        // Loads images into CSS and Javascript files
-        test: /\.jpg$/,
+        test: /\.(png|svg|jpg|gif)$/,
         use: [{loader: "url-loader"}]
       },
       {
-        // Loads CSS into a file when you import it via Javascript
-        // Rules are set in MiniCssExtractPlugin
         test: /\.css$/,
         use: [MiniCssExtractPlugin.loader, 'css-loader']
       },

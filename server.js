@@ -11,10 +11,20 @@ if (process.env.NODE_ENV !== 'production') {
 	const webpackDevconfig = require('./webpack.dev.js');
 	const compiler = webpack(webpackDevconfig);
 	
-    app.get('/',function(req,res){  
-        res.sendFile(path.join(__dirname, './src/index.html'));  
-    });
-	app.use(webpackDevMiddleware(compiler));
+	app.use(webpackDevMiddleware(compiler, {
+        publicPath: webpackDevconfig.output.publicPath
+    }));
+
+    app.get('*', (req, res, next) => {
+      compiler.outputFileSystem.readFile(HTML_FILE, (err, result) => {
+      if (err) {
+        return next(err)
+      }
+      res.set('content-type', 'text/html')
+      res.send(result)
+      res.end()
+      })
+    })
 
 } else {
   const publicPath = path.join(__dirname, '../dist');

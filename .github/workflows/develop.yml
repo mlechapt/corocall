@@ -28,7 +28,7 @@ jobs:
     - name: Npm install
       run: npm install
     - name: Production Build
-      run: npm build
+      run: npm run build
     - name: Deploy to S3
       uses: jakejarvis/s3-sync-action@master
       with:
