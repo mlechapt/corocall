@@ -1,12 +1,8 @@
 import React from 'react';
-import './App.css';
+import ReactDOM from 'react-dom';
+import Main from './components/main';  
 
-function App() {
-  return (
-    <div className="App">
-        <h1>Corocall</h1>
-    </div>
-  );
-}
-
-export default App;
+ReactDOM.render(
+	<Main />,
+	document.getElementById('app')
+);
